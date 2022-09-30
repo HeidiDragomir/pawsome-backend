@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 
-
 // @description Register new user
 // @route   POST /api/users
 // @access public
@@ -40,15 +39,13 @@ const registerUser = asyncHandler(async (req, res) => {
 			_id: user.id,
 			name: user.name,
 			email: user.email,
-			token: generateToken(user._id)
+			token: generateToken(user._id),
 		});
 	} else {
 		res.status(400);
 		throw new Error("Invalid user data");
 	}
 });
-
-
 
 // @description Authenticate a user
 // @route   POST /api/users/login
@@ -64,7 +61,7 @@ const loginUser = asyncHandler(async (req, res) => {
 			_id: user.id,
 			name: user.name,
 			email: user.email,
-			token: generateToken(user._id)
+			token: generateToken(user._id),
 		});
 	} else {
 		res.status(400);
@@ -72,19 +69,22 @@ const loginUser = asyncHandler(async (req, res) => {
 	}
 });
 
-
-
 // @description Get user data
 // @route   GET /api/users/me
 // @access private
 
-const getMe = (req, res) => {
-	res.json({ message: "User Data" });
-};
+const getMe = asyncHandler(async (req, res) => {
+	const { _id, name, email } = await User.findById(req.user.id);
+	res.status(200).json({
+		id: _id,
+		name,
+		email,
+	});
+});
 
 // Generate Token
 const generateToken = (id) => {
-	return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: "30d"} )
-}
+	return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
 
 export { registerUser, loginUser, getMe };
