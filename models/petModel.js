@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const petSchema = mongoose.Schema(
 	{
-		petName: {
+		name: {
 			type: String,
 			required: [true, "Please add a name"],
 		},
