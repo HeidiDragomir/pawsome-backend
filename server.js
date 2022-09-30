@@ -1,7 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
+import { errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import petRoutes from "./routes/petRoutes.js";
 
 dotenv.config();
 
@@ -18,6 +20,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/pets", petRoutes);
+
+app.use(errorHandler);
 
 // Create a server
 const port = process.env.PORT || 3000;
