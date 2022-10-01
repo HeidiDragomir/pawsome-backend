@@ -6,10 +6,19 @@ import User from "../models/userModel.js";
 
 // @desc    Get all pets
 // @route   GET /api/pets
-// @access  private
+// @access  public
 
 const getPets = asyncHandler(async (req, res) => {
 	const pets = await Pet.find();
+	res.status(200).json(pets);
+});
+
+// @desc    Get user pets
+// @route   GET /api/pets/mypets
+// @access  private
+
+const getMyPets = asyncHandler(async (req, res) => {
+	const pets = await Pet.find({ user: req.user.id });
 	res.status(200).json(pets);
 });
 
@@ -24,6 +33,7 @@ const createPet = asyncHandler(async (req, res) => {
 	}
 
 	const pet = Pet.create({
+		user: req.user.id,
 		name: req.body.name,
 		gender: req.body.gender,
 		age: req.body.age,
@@ -52,10 +62,24 @@ const updatePet = asyncHandler(async (req, res) => {
 		pet.photo = photo;
 		pet.place = place;
 
+		const user = await User.findById(req.user.id);
+
+		// Check if user exists
+		if (!user) {
+			res.status(401);
+			throw new Error("User not found");
+		}
+
+		// Make sure the logged in user matches the pet user
+		if (pet.user.toString() !== user.id) {
+			res.status(401);
+			throw new Error("User not authorized");
+		}
+
 		const updatedPet = await pet.save();
 		res.status(200).json(updatedPet);
 	} else {
-		res.status(400);
+		res.status(404);
 		throw new Error("Pet not found");
 	}
 });
@@ -68,6 +92,20 @@ const deletePet = asyncHandler(async (req, res) => {
 	const pet = await Pet.findById(req.params.id);
 
 	if (pet) {
+		const user = await User.findById(req.user.id);
+
+		// Check if user exists
+		if (!user) {
+			res.status(404);
+			throw new Error("User not found");
+		}
+
+		// Make sure the logged in user matches the pet user
+		if (pet.user.toString() !== user.id) {
+			res.status(401);
+			throw new Error("User not authorized");
+		}
+
 		await pet.remove();
 		res.json({ message: "Pet deleted" });
 	} else {
@@ -76,4 +114,4 @@ const deletePet = asyncHandler(async (req, res) => {
 	}
 });
 
-export { getPets, createPet, updatePet, deletePet };
+export { getPets, getMyPets, createPet, updatePet, deletePet };
