@@ -3,13 +3,17 @@ import {
 	createPet,
 	deletePet,
 	getPets,
+	getMyPets,
 	updatePet,
 } from "../controllers/petController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.route("/").get(getPets).post(createPet);
+router.get("/", getPets)
 
-router.route("/:id").put(updatePet).delete(deletePet);
+router.route("/mypets").get(protect, getMyPets).post(protect, createPet);
+
+router.route("/mypets/:id").put(protect, updatePet).delete(protect, deletePet);
 
 export default router;
