@@ -4,25 +4,26 @@ const userSchema = mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: [true, "Please add a name"],
+			required: true,
 		},
 		email: {
 			type: String,
-			required: [true, "Please add an email"],
+			required: true,
 			unique: true,
 		},
 		password: {
 			type: String,
-			required: [true, "Please add a password"],
+			required: true,
 		},
 		isAdmin: {
 			type: Boolean,
-			required: [true, "Please add a role"],
+			required: true,
 			default: false,
 		},
 		details: {
-			type: String
-		}
+			type: String,
+			required: false,
+		},
 	},
 	{
 		timestamps: true,
