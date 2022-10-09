@@ -5,15 +5,15 @@ import User from "../models/userModel.js";
 
 // @description Register new user
 // @route   POST /api/users
-// @access public
+// @access Public
 
 const registerUser = asyncHandler(async (req, res) => {
-	const { name, email, password } = req.body;
+	const { name, email, password, isAdmin } = req.body;
 
-	if (!name || !email || !password) {
-		res.status(400);
-		throw new Error("Please add all fields");
-	}
+	// if (!name || !email || !password || !confirmPassword) {
+	// 	res.status(400);
+	// 	throw new Error("Please add all fields");
+	// }
 
 	// Check if user exists
 	const userExist = await User.findOne({ email });
@@ -32,13 +32,15 @@ const registerUser = asyncHandler(async (req, res) => {
 		name,
 		email,
 		password: hashedPassword,
+		isAdmin,
 	});
 
 	if (user) {
 		res.status(201).json({
-			_id: user.id,
+			_id: user._id,
 			name: user.name,
 			email: user.email,
+			isAdmin: user.isAdmin,
 			token: generateToken(user._id),
 		});
 	} else {
@@ -49,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // @description Authenticate a user
 // @route   POST /api/users/login
-// @access public
+// @access Public
 
 const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
@@ -58,33 +60,121 @@ const loginUser = asyncHandler(async (req, res) => {
 
 	if (user && (await bcrypt.compare(password, user.password))) {
 		res.json({
-			_id: user.id,
+			_id: user._id,
 			name: user.name,
 			email: user.email,
+			isAdmin: user.isAdmin,
 			token: generateToken(user._id),
 		});
 	} else {
 		res.status(400);
-		throw new Error("Invalid credentials");
+		throw new Error("Invalid email or password");
 	}
 });
 
 // @description Get user data
 // @route   GET /api/users/me
-// @access private
+// @access Private
 
-const getMe = asyncHandler(async (req, res) => {
-	const { _id, name, email } = await User.findById(req.user.id);
-	res.status(200).json({
-		id: _id,
-		name,
-		email,
-	});
+const profileUser = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+
+	if (user) {
+		res.json({
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			isAdmin: user.isAdmin,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
 });
+
+//// ABOUT ME
+
+// @description Post user details
+// @route   POST /api/users/profile/aboutme
+// @access Private
+
+const createAboutMe = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+
+	if (!req.body.details) {
+		res.status(400);
+		throw new Error("Please add a description");
+	}
+
+	if (user) {
+		user.details = req.body.details;
+
+		const createdAboutMe = await user.save();
+		res.json({
+			details: createdAboutMe.details,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+});
+
+// @description Get user details
+// @route   GET /api/users/profile/aboutme
+// @access Private
+
+const getAboutMe = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+	if (user) {
+		res.json({
+			details: user.details,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+});
+
+// @description Update user details
+// @route   PUT /api/users/profile/aboutme
+// @access Private
+
+const updateAboutMe = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+
+	if (!req.body.details) {
+		res.status(400);
+		throw new Error("Please add or update a description");
+	}
+
+	if (user) {
+		user.details = req.body.details || user.details;
+
+		const updatedDetails = await user.save();
+
+		res.json({
+			details: updatedDetails.details,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+});
+
+
+
+
 
 // Generate Token
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-export { registerUser, loginUser, getMe };
+export {
+	registerUser,
+	loginUser,
+	profileUser,
+	createAboutMe,
+	getAboutMe,
+	updateAboutMe,
+};
