@@ -8,7 +8,7 @@ import User from "../models/userModel.js";
 // @access Public
 
 const registerUser = asyncHandler(async (req, res) => {
-	const { name, email, password, isAdmin } = req.body;
+	const { name, email, password } = req.body;
 
 	// if (!name || !email || !password || !confirmPassword) {
 	// 	res.status(400);
@@ -28,11 +28,10 @@ const registerUser = asyncHandler(async (req, res) => {
 	const hashedPassword = await bcrypt.hash(password, salt);
 
 	// Create user
-	const user = User.create({
+	const user = await User.create({
 		name,
 		email,
 		password: hashedPassword,
-		isAdmin,
 	});
 
 	if (user) {
@@ -73,7 +72,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // @description Get user data
-// @route   GET /api/users/me
+// @route   GET /api/users/profile
 // @access Private
 
 const profileUser = asyncHandler(async (req, res) => {
@@ -85,6 +84,35 @@ const profileUser = asyncHandler(async (req, res) => {
 			name: user.name,
 			email: user.email,
 			isAdmin: user.isAdmin,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+});
+
+// @description Update user data
+// @route   PUT /api/users/profile
+// @access Private
+
+const updateProfileUser = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+	if (user) {
+		user.name = req.body.name || user.name;
+		user.email = req.body.email || user.email;
+
+		if (req.body.password) {
+			user.password = req.body.password;
+		}
+
+		const updatedUser = await user.save();
+
+		res.json({
+			_id: updatedUser._id,
+			name: updatedUser.name,
+			email: updatedUser.email,
+			isAdmin: updatedUser.isAdmin,
+			token: generateToken(updatedUser._id),
 		});
 	} else {
 		res.status(404);
@@ -161,9 +189,107 @@ const updateAboutMe = asyncHandler(async (req, res) => {
 	}
 });
 
+// @description Create new user by admin
+// @route   POST /api/users/admin
+// @access Admin
 
+const registerUserAdmin = asyncHandler(async (req, res) => {
+	const { name, email, password, isAdmin } = req.body;
+	const userExist = await User.findOne({ email });
 
+	if (userExist) {
+		res.status(400);
+		throw new Error("User already exists");
+	}
 
+	// Hash password
+	const salt = await bcrypt.genSalt(10);
+	const hashedPassword = await bcrypt.hash(password, salt);
+
+	const user = await User.create({
+		name,
+		email,
+		password: hashedPassword,
+		isAdmin,
+	});
+
+	if (user) {
+		res.status(201).json({
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			isAdmin: user.isAdmin,
+		});
+	} else {
+		res.status(400);
+		throw new Error("Invalid user data");
+	}
+});
+
+// @description Get all users
+// @route   GET /api/users
+// @access Admin
+
+const getUsers = asyncHandler(async (req, res) => {
+	const users = await User.find();
+	res.json(users);
+});
+
+// @description Get user by id
+// @route   GET /api/users/:id
+// @access Admin
+
+const getUserById = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.params.id).select("-password");
+
+	if (user) {
+		res.json(user);
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+});
+
+// @description Update user
+// @route   PUT /api/users/:id
+// @access Admin
+
+const updateUser = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.params.id);
+	if (user) {
+		user.name = req.body.name || user.name;
+		user.email = req.body.email || user.email;
+		user.isAdmin = req.body.isAdmin;
+
+		const updatedUser = await user.save();
+
+		res.json({
+			_id: updatedUser._id,
+			name: updatedUser.name,
+			email: updatedUser.email,
+			isAdmin: updatedUser.isAdmin,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+});
+
+// @description Delete user
+// @route   DELETE /api/users/:id
+// @access Admin
+
+const deleteUser = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.params.id);
+	if (user) {
+		await user.remove();
+		res.json({ message: "User deleted" });
+	} else {
+		res.status(404);
+		throw new Error("User not found");
+	}
+	res.json(user);
+});
 
 // Generate Token
 const generateToken = (id) => {
@@ -174,7 +300,13 @@ export {
 	registerUser,
 	loginUser,
 	profileUser,
+	updateProfileUser,
 	createAboutMe,
 	getAboutMe,
 	updateAboutMe,
+	registerUserAdmin,
+	getUsers,
+	getUserById,
+	updateUser,
+	deleteUser,
 };
