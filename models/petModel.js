@@ -36,6 +36,21 @@ const petSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add a place"],
 		},
+		isAdopted: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
+		isFostered: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
+		isVirtualAdopted: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
 	},
 	{
 		timestamps: true,

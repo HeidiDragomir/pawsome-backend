@@ -18,6 +18,11 @@ const eventSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	isAttended: {
+		type: Boolean,
+		required: true,
+		default: false,
+	},
 });
 
 export default mongoose.model("Event", eventSchema);

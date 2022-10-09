@@ -18,6 +18,11 @@ const donationSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	isNeeded: {
+		type: Boolean,
+		required: true,
+		default: false,
+	},
 });
 
 export default mongoose.model("Donation", donationSchema);

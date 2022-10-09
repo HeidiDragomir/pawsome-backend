@@ -18,6 +18,11 @@ const volunteerSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	isHelped: {
+		type: Boolean,
+		required: true,
+		default: false,
+	},
 });
 
 export default mongoose.model("Volunteer", volunteerSchema);
