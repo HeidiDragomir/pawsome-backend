@@ -1,5 +1,3 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
 import Pet from "../models/petModel.js";
 import User from "../models/userModel.js";

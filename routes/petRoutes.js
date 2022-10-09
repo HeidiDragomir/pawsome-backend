@@ -10,7 +10,7 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getPets)
+router.get("/", getPets);
 
 router.route("/mypets").get(protect, getMyPets).post(protect, createPet);
 
