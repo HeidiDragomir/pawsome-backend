@@ -5,6 +5,10 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import petRoutes from "./routes/petRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import donationRoutes from "./routes/donationRoutes.js";
+import volunteerRoutes from "./routes/volunteerRoutes.js";
+import problemRoutes from "./routes/problemRoutes.js";
 
 dotenv.config();
 
@@ -23,6 +27,10 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/pets", petRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/donations", donationRoutes);
+app.use("/api/volunteers", volunteerRoutes);
+app.use("/api/problems", problemRoutes);
 
 app.use(errorHandler);
 
