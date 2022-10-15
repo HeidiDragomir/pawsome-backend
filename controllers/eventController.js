@@ -11,12 +11,26 @@ const getEvents = asyncHandler(async (req, res) => {
 	res.status(200).json(events);
 });
 
+// @desc    Get event by id
+// @route   GET /api/events/:id
+// @access  private
+
+const getEventById = asyncHandler(async (req, res) => {
+	const event = await Event.findById(req.params.id);
+	if (event) {
+		res.json(event);
+	} else {
+		res.status(404);
+		throw new Error("Event not found");
+	}
+});
+
 // @desc    Get user events
 // @route   GET /api/events/myevents
 // @access  private
 
 const getMyEvents = asyncHandler(async (req, res) => {
-	const events = await Event.find({ user: req.user.id });
+	const events = await Event.find({ user: req.user._id });
 	res.status(200).json(events);
 });
 
@@ -25,13 +39,13 @@ const getMyEvents = asyncHandler(async (req, res) => {
 // @access  private
 
 const createEvent = asyncHandler(async (req, res) => {
-	if (!req.body.title) {
-		res.status(400);
-		throw new Error("Please add a title");
-	}
+	// if (!req.body.title) {
+	// 	res.status(400);
+	// 	throw new Error("Please add a title");
+	// }
 
 	const event = Event.create({
-		user: req.user.id,
+		user: req.user._id,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
@@ -52,7 +66,7 @@ const updateEvent = asyncHandler(async (req, res) => {
 		event.photo = photo;
 		event.description = description;
 
-		const user = await User.findById(req.user.id);
+		const user = await User.findById(req.user._id);
 
 		// Check if user exists
 		if (!user) {
@@ -104,4 +118,11 @@ const deleteEvent = asyncHandler(async (req, res) => {
 	}
 });
 
-export { getEvents, getMyEvents, createEvent, updateEvent, deleteEvent };
+export {
+	getEvents,
+	getEventById,
+	getMyEvents,
+	createEvent,
+	updateEvent,
+	deleteEvent,
+};
