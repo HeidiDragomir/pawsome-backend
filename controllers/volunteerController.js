@@ -11,12 +11,26 @@ const getVolunteers = asyncHandler(async (req, res) => {
 	res.status(200).json(volunteers);
 });
 
+// @desc    Get volunteer by id
+// @route   GET /api/voluunteers/:id
+// @access  private
+
+const getVolunteerById = asyncHandler(async (req, res) => {
+	const volunteer = await Volunteer.findById(req.params.id);
+	if (volunteer) {
+		res.json(volunteer);
+	} else {
+		res.status(404);
+		throw new Error("Volunteer not found");
+	}
+});
+
 // @desc    Get user volunteers
 // @route   GET /api/volunteers/myvolunteers
 // @access  private
 
 const getMyVolunteers = asyncHandler(async (req, res) => {
-	const volunteers = await Volunteer.find({ user: req.user.id });
+	const volunteers = await Volunteer.find({ user: req.user._id });
 	res.status(200).json(volunteers);
 });
 
@@ -25,13 +39,13 @@ const getMyVolunteers = asyncHandler(async (req, res) => {
 // @access  private
 
 const createVolunteer = asyncHandler(async (req, res) => {
-	if (!req.body.title) {
-		res.status(400);
-		throw new Error("Please add a title");
-	}
+	// if (!req.body.title) {
+	// 	res.status(400);
+	// 	throw new Error("Please add a title");
+	// }
 
 	const volunteer = Volunteer.create({
-		user: req.user.id,
+		user: req.user._id,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
@@ -52,7 +66,7 @@ const updateVolunteer = asyncHandler(async (req, res) => {
 		volunteer.photo = photo;
 		volunteer.description = description;
 
-		const user = await User.findById(req.user.id);
+		const user = await User.findById(req.user._id);
 
 		// Check if user exists
 		if (!user) {
@@ -110,4 +124,5 @@ export {
 	createVolunteer,
 	updateVolunteer,
 	deleteVolunteer,
+	getVolunteerById,
 };
