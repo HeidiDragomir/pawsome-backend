@@ -11,40 +11,56 @@ const getPets = asyncHandler(async (req, res) => {
 	res.status(200).json(pets);
 });
 
+// @desc    Get pet by id
+// @route   GET /api/pets/:id
+// @access  private
+
+const getPetById = asyncHandler(async (req, res) => {
+	const pet = await Pet.findById(req.params.id);
+	if (pet) {
+		res.json(pet);
+	} else {
+		res.status(404);
+		throw new Error("Pet not found");
+	}
+});
+
 // @desc    Get user pets
 // @route   GET /api/pets/mypets
 // @access  private
 
 const getMyPets = asyncHandler(async (req, res) => {
-	const pets = await Pet.find({ user: req.user.id });
+	const pets = await Pet.find({ user: req.user._id });
 	res.status(200).json(pets);
 });
-
 // @desc    Set pet
 // @route   SET /api/pets
 // @access  private
 
 const createPet = asyncHandler(async (req, res) => {
-	if (!req.body.name) {
-		res.status(400);
-		throw new Error("Please add a name");
-	}
+	// if (!req.body.name) {
+	// 	res.status(400);
+	// 	throw new Error("Please add a name");
+	// }
 
-	const pet = Pet.create({
-		user: req.user.id,
-		name: req.body.name,
-		gender: req.body.gender,
-		age: req.body.age,
-		size: req.body.size,
-		about: req.body.about,
-		photo: req.body.photo,
-		place: req.body.place,
+	const { name, gender, age, size, about, photo, place } = req.body;
+
+	const pet = new Pet({
+		user: req.user._id,
+		name,
+		gender,
+		age,
+		size,
+		about,
+		photo,
+		place,
 	});
-	res.status(200).json(pet);
+	const createdPet = await pet.save();
+	res.status(200).json(createdPet);
 });
 
 // @desc    Update pet
-// @route   PUT /api/pets/:id
+// @route   PUT /api/pets/mypets/:id
 // @access  private
 
 const updatePet = asyncHandler(async (req, res) => {
@@ -60,7 +76,7 @@ const updatePet = asyncHandler(async (req, res) => {
 		pet.photo = photo;
 		pet.place = place;
 
-		const user = await User.findById(req.user.id);
+		const user = await User.findById(req.user._id);
 
 		// Check if user exists
 		if (!user) {
@@ -112,4 +128,4 @@ const deletePet = asyncHandler(async (req, res) => {
 	}
 });
 
-export { getPets, getMyPets, createPet, updatePet, deletePet };
+export { getPets, getPetById, getMyPets, createPet, updatePet, deletePet };
