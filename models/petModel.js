@@ -9,32 +9,33 @@ const petSchema = mongoose.Schema(
 		},
 		name: {
 			type: String,
-			required: [true, "Please add a name"],
+			required: true,
 		},
 		gender: {
 			type: String,
-			required: [true, "Please add a gender"],
+			required: true,
 		},
 		age: {
 			type: Number,
-			required: [true, "Please add an age"],
+			required: true,
+			default: 0,
 		},
 		size: {
 			type: String,
-			required: [true, "Please add a size"],
+			required: true,
 		},
 		about: {
 			type: String,
-			required: [true, "Please add some info"],
+			required: true,
 			maxlength: [1000, "Character can not be more than 1000 characters"],
 		},
 		photo: {
 			type: String,
-			required: [true, "Please add a photo"],
+			required: true,
 		},
 		place: {
 			type: String,
-			required: [true, "Please add a place"],
+			required: true,
 		},
 		isAdopted: {
 			type: Boolean,

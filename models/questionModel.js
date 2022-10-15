@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const donationSchema = mongoose.Schema(
+const questionSchema = mongoose.Schema(
 	{
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -19,10 +19,9 @@ const donationSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		isNeeded: {
-			type: Boolean,
-			required: true,
-			default: false,
+		answer: {
+			type: String,
+			required: false,
 		},
 	},
 	{
@@ -30,4 +29,4 @@ const donationSchema = mongoose.Schema(
 	}
 );
 
-export default mongoose.model("Donation", donationSchema);
+export default mongoose.model("Question", questionSchema);
