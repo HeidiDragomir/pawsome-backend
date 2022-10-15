@@ -8,7 +8,7 @@ import petRoutes from "./routes/petRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import donationRoutes from "./routes/donationRoutes.js";
 import volunteerRoutes from "./routes/volunteerRoutes.js";
-import problemRoutes from "./routes/problemRoutes.js";
+import questionRoutes from "./routes/questionRoutes.js";
 
 dotenv.config();
 
@@ -30,7 +30,7 @@ app.use("/api/pets", petRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/donations", donationRoutes);
 app.use("/api/volunteers", volunteerRoutes);
-app.use("/api/problems", problemRoutes);
+app.use("/api/questions", questionRoutes);
 
 app.use(errorHandler);
 
