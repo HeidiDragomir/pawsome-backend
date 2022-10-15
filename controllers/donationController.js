@@ -11,12 +11,26 @@ const getDonations = asyncHandler(async (req, res) => {
 	res.status(200).json(donations);
 });
 
+// @desc    Get donation by id
+// @route   GET /api/donations/:id
+// @access  private
+
+const getDonationById = asyncHandler(async (req, res) => {
+	const donation = await Donation.findById(req.params.id);
+	if (donation) {
+		res.json(donation);
+	} else {
+		res.status(404);
+		throw new Error("Donation not found");
+	}
+});
+
 // @desc    Get user donations
 // @route   GET /api/donations/mydonations
 // @access  private
 
 const getMyDonations = asyncHandler(async (req, res) => {
-	const donations = await Donation.find({ user: req.user.id });
+	const donations = await Donation.find({ user: req.user._id });
 	res.status(200).json(donations);
 });
 
@@ -25,13 +39,13 @@ const getMyDonations = asyncHandler(async (req, res) => {
 // @access  private
 
 const createDonation = asyncHandler(async (req, res) => {
-	if (!req.body.title) {
-		res.status(400);
-		throw new Error("Please add a title");
-	}
+	// if (!req.body.title) {
+	// 	res.status(400);
+	// 	throw new Error("Please add a title");
+	// }
 
 	const donation = Donation.create({
-		user: req.user.id,
+		user: req.user._id,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
@@ -52,7 +66,7 @@ const updateDonation = asyncHandler(async (req, res) => {
 		donation.photo = photo;
 		donation.description = description;
 
-		const user = await User.findById(req.user.id);
+		const user = await User.findById(req.user._id);
 
 		// Check if user exists
 		if (!user) {
@@ -104,4 +118,11 @@ const deleteDonation = asyncHandler(async (req, res) => {
 	}
 });
 
-export { getDonations, getMyDonations, createDonation, updateDonation, deleteDonation };
+export {
+	getDonations,
+	getMyDonations,
+	createDonation,
+	updateDonation,
+	deleteDonation,
+	getDonationById,
+};
