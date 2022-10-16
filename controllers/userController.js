@@ -84,6 +84,7 @@ const profileUser = asyncHandler(async (req, res) => {
 			name: user.name,
 			email: user.email,
 			isAdmin: user.isAdmin,
+			details: user.details,
 		});
 	} else {
 		res.status(404);
@@ -97,13 +98,20 @@ const profileUser = asyncHandler(async (req, res) => {
 
 const updateProfileUser = asyncHandler(async (req, res) => {
 	const user = await User.findById(req.user._id);
+
 	if (user) {
 		user.name = req.body.name || user.name;
 		user.email = req.body.email || user.email;
+		// user.password = req.body.password.hashedPassword;
+
+		// Hash password
+		// const salt = await bcrypt.genSalt(10);
+		// const hashedPassword = await bcrypt.hash(password, salt);
 
 		if (req.body.password) {
 			user.password = req.body.password;
 		}
+		user.details = req.body.details || user.details;
 
 		const updatedUser = await user.save();
 
@@ -113,6 +121,7 @@ const updateProfileUser = asyncHandler(async (req, res) => {
 			email: updatedUser.email,
 			isAdmin: updatedUser.isAdmin,
 			token: generateToken(updatedUser._id),
+			details: updatedUser.details,
 		});
 	} else {
 		res.status(404);
