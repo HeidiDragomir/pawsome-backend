@@ -7,7 +7,38 @@ import User from "../models/userModel.js";
 // @access  public
 
 const getPets = asyncHandler(async (req, res) => {
-	const pets = await Pet.find();
+	const keyword = req.query.keyword
+		? {
+				$or: [
+					{
+						name: {
+							$regex: req.query.keyword,
+							$options: "i",
+						},
+					},
+					{
+						gender: {
+							$regex: req.query.keyword,
+							$options: "i",
+						},
+					},
+					{
+						size: {
+							$regex: req.query.keyword,
+							$options: "i",
+						},
+					},
+					{
+						place: {
+							$regex: req.query.keyword,
+							$options: "i",
+						},
+					},
+				],
+		  }
+		: {};
+
+	const pets = await Pet.find({ ...keyword });
 	res.status(200).json(pets);
 });
 
