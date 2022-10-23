@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import { errorHandler } from "./middleware/errorMiddleware.js";
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
@@ -19,7 +19,11 @@ const app = express();
 
 // Parse json objects
 app.use(express.json());
-app.use(cors());
+app.use(
+	cors({
+		origin: "*",
+	})
+);
 
 app.get("/", (req, res) => {
 	res.send("API is running.");
@@ -32,6 +36,7 @@ app.use("/api/donations", donationRoutes);
 app.use("/api/volunteers", volunteerRoutes);
 app.use("/api/questions", questionRoutes);
 
+app.use(notFound);
 app.use(errorHandler);
 
 // Create a server
