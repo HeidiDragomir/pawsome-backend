@@ -159,4 +159,33 @@ const deletePet = asyncHandler(async (req, res) => {
 	}
 });
 
-export { getPets, getPetById, getMyPets, createPet, updatePet, deletePet };
+// @desc    Update petToAdopted
+// @route   PUT /api/pets/:id
+// @access  public
+
+const updatePetToAdopted = asyncHandler(async (req, res) => {
+	const { isAdopted, isFostered, isVirtualAdopted } = req.body;
+	const pet = await Pet.findById(req.params.id);
+
+	if (pet) {
+		pet.isAdopted = isAdopted || pet.isAdopted;
+		pet.isFostered = isFostered || pet.isFostered;
+		pet.isVirtualAdopted = isVirtualAdopted || pet.isVirtualAdopted;
+
+		const updatedPet = await pet.save();
+		res.status(200).json(updatedPet);
+	} else {
+		res.status(404);
+		throw new Error("Pet not found");
+	}
+});
+
+export {
+	getPets,
+	getPetById,
+	getMyPets,
+	createPet,
+	updatePet,
+	deletePet,
+	updatePetToAdopted,
+};
