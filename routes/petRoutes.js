@@ -6,6 +6,7 @@ import {
 	getPetById,
 	getMyPets,
 	updatePet,
+	updatePetToAdopted,
 } from "../controllers/petController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -18,5 +19,7 @@ router.route("/mypets").get(protect, getMyPets).post(protect, createPet);
 router.get("/:id", protect, getPetById);
 
 router.route("/mypets/:id").put(protect, updatePet).delete(protect, deletePet);
+
+router.route("/:id").put(updatePetToAdopted);
 
 export default router;
