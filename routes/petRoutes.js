@@ -20,6 +20,6 @@ router.get("/:id", protect, getPetById);
 
 router.route("/mypets/:id").put(protect, updatePet).delete(protect, deletePet);
 
-router.route("/:id").put(updatePetToAdopted);
+router.route("/:id").put(protect, updatePetToAdopted);
 
 export default router;
