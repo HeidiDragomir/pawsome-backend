@@ -161,15 +161,16 @@ const deletePet = asyncHandler(async (req, res) => {
 
 // @desc    Update petToAdopted
 // @route   PUT /api/pets/:id
-// @access  public
+// @access  private
 
 const updatePetToAdopted = asyncHandler(async (req, res) => {
+	const { isAdopted, isFostered, isVirtualAdopted } = req.body;
 	const pet = await Pet.findById(req.params.id);
 
 	if (pet) {
-		pet.isAdopted = true;
-		pet.isFostered = true;
-		pet.isVirtualAdopted = true;
+		pet.isAdopted = isAdopted || pet.isAdopted;
+		pet.isFostered = isFostered || pet.isFostered;
+		pet.isVirtualAdopted = isVirtualAdopted || pet.isVirtualAdopted;
 
 		const updatedPet = await pet.save();
 		res.status(200).json(updatedPet);
