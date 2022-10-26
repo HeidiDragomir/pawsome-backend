@@ -44,14 +44,15 @@ const createQuestion = asyncHandler(async (req, res) => {
 	// 	throw new Error("Please add a title");
 	// }
 
-	const question = Question.create({
+	const question = new Question({
 		user: req.user._id,
+		name: req.user.name,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
-		answer: req.body.answer,
 	});
-	res.status(200).json(question);
+	const createdQuestion = await question.save();
+	res.status(200).json(createdQuestion);
 });
 
 // @desc    Update question
@@ -59,14 +60,13 @@ const createQuestion = asyncHandler(async (req, res) => {
 // @access  private
 
 const updateQuestion = asyncHandler(async (req, res) => {
-	const { title, photo, description, answer } = req.body;
+	const { title, photo, description } = req.body;
 	const question = await Question.findById(req.params.id);
 
 	if (question) {
 		question.title = title;
 		question.photo = photo;
 		question.description = description;
-		question.answer = answer;
 
 		const user = await User.findById(req.user._id);
 
@@ -120,6 +120,32 @@ const deleteQuestion = asyncHandler(async (req, res) => {
 	}
 });
 
+// @desc    Create answer
+// @route   Post /api/questions/:id/answers
+// @access  Private
+
+const createAnswer = asyncHandler(async (req, res) => {
+	const { text } = req.body;
+
+	const question = await Question.findById(req.params.id);
+
+	if (question) {
+		const answer = {
+			name: req.user.name,
+			text,
+			user: req.user._id,
+		};
+
+		question.answers.push(answer);
+
+		await question.save();
+		res.status(201).json({ message: "Answer added." });
+	} else {
+		res.status(404);
+		throw new Error("Question not found.");
+	}
+});
+
 export {
 	getQuestions,
 	getMyQuestions,
@@ -127,4 +153,5 @@ export {
 	updateQuestion,
 	deleteQuestion,
 	getQuestionById,
+	createAnswer,
 };
