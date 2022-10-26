@@ -6,6 +6,7 @@ import {
 	getMyQuestions,
 	updateQuestion,
 	getQuestionById,
+	createAnswer,
 } from "../controllers/questionController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -19,6 +20,7 @@ router
 	.post(protect, createQuestion);
 
 router.get("/:id", protect, getQuestionById);
+router.post("/:id/answers", protect, createAnswer);
 
 router
 	.route("/myquestions/:id")
