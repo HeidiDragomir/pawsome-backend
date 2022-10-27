@@ -1,11 +1,37 @@
 import mongoose from "mongoose";
 
+const participantSchema = mongoose.Schema(
+	{
+		name: {
+			type: String,
+			required: true,
+		},
+		checked: {
+			type: Boolean,
+			required: true,
+			default: true,
+		},
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: "User",
+		},
+	},
+	{
+		timestamps: true,
+	}
+);
+
 const volunteerSchema = mongoose.Schema(
 	{
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			required: true,
 			ref: "User",
+		},
+		name: {
+			type: String,
+			required: false,
 		},
 		title: {
 			type: String,
@@ -19,11 +45,7 @@ const volunteerSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		isHelped: {
-			type: Boolean,
-			required: true,
-			default: false,
-		},
+		participants: [participantSchema],
 	},
 	{
 		timestamps: true,
