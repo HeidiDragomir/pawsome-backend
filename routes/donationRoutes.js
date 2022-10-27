@@ -6,6 +6,7 @@ import {
 	getMyDonations,
 	updateDonation,
 	getDonationById,
+	createDonationParticipant,
 } from "../controllers/donationController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -19,6 +20,7 @@ router
 	.post(protect, createDonation);
 
 router.get("/:id", protect, getDonationById);
+router.post("/:id/participants", protect, createDonationParticipant);
 
 router
 	.route("/mydonations/:id")
