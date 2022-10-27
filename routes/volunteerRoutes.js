@@ -6,6 +6,7 @@ import {
 	getMyVolunteers,
 	updateVolunteer,
 	getVolunteerById,
+	createVolunteerParticipant,
 } from "../controllers/volunteerController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -19,6 +20,7 @@ router
 	.post(protect, createVolunteer);
 
 router.get("/:id", protect, getVolunteerById);
+router.post("/:id/participants", protect, createVolunteerParticipant);
 
 router
 	.route("/myvolunteers/:id")

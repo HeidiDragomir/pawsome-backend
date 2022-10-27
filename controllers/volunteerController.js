@@ -46,6 +46,7 @@ const createVolunteer = asyncHandler(async (req, res) => {
 
 	const volunteer = Volunteer.create({
 		user: req.user._id,
+		name: req.user.name,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
@@ -118,6 +119,31 @@ const deleteVolunteer = asyncHandler(async (req, res) => {
 	}
 });
 
+// @desc    Create participant
+// @route   POST /api/events/:id
+// @access  private
+
+const createVolunteerParticipant = asyncHandler(async (req, res) => {
+	const { checked } = req.body;
+	const volunteer = await Volunteer.findById(req.params.id);
+
+	if (volunteer) {
+		const participant = {
+			name: req.user.name,
+			checked: checked || volunteer.checked,
+			user: req.user._id,
+		};
+
+		volunteer.participants.push(participant);
+
+		await volunteer.save();
+		res.status(201).json({ message: "Participant checked." });
+	} else {
+		res.status(404);
+		throw new Error("Volunteer not found");
+	}
+});
+
 export {
 	getVolunteers,
 	getMyVolunteers,
@@ -125,4 +151,5 @@ export {
 	updateVolunteer,
 	deleteVolunteer,
 	getVolunteerById,
+	createVolunteerParticipant,
 };
