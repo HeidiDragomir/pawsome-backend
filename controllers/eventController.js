@@ -46,6 +46,7 @@ const createEvent = asyncHandler(async (req, res) => {
 
 	const event = Event.create({
 		user: req.user._id,
+		name: req.user.name,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
@@ -118,6 +119,31 @@ const deleteEvent = asyncHandler(async (req, res) => {
 	}
 });
 
+// @desc    Update petToAdopted
+// @route   PUT /api/pets/:id
+// @access  private
+
+const createEventParticipant = asyncHandler(async (req, res) => {
+	const { isAttended } = req.body;
+	const event = await Event.findById(req.params.id);
+
+	if (event) {
+		const participant = {
+			name: req.user.name,
+			isAttended: isAttended || event.isAttended,
+			user: req.user._id,
+		};
+
+		event.participants.push(participant);
+
+		await event.save();
+		res.status(201).json({ message: "Participant added." });
+	} else {
+		res.status(404);
+		throw new Error("Event not found");
+	}
+});
+
 export {
 	getEvents,
 	getEventById,
@@ -125,4 +151,5 @@ export {
 	createEvent,
 	updateEvent,
 	deleteEvent,
+	createEventParticipant,
 };
