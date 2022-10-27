@@ -119,18 +119,18 @@ const deleteEvent = asyncHandler(async (req, res) => {
 	}
 });
 
-// @desc    Update petToAdopted
-// @route   PUT /api/pets/:id
+// @desc    Create participant
+// @route   POST /api/events/:id
 // @access  private
 
 const createEventParticipant = asyncHandler(async (req, res) => {
-	const { isAttended } = req.body;
+	const { attended } = req.body;
 	const event = await Event.findById(req.params.id);
 
 	if (event) {
 		const participant = {
 			name: req.user.name,
-			isAttended: isAttended || event.isAttended,
+			attended: attended || event.attended,
 			user: req.user._id,
 		};
 

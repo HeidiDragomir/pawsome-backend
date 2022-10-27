@@ -29,6 +29,10 @@ const eventSchema = mongoose.Schema(
 			required: true,
 			ref: "User",
 		},
+		name: {
+			type: String,
+			required: false,
+		},
 		title: {
 			type: String,
 			required: true,
