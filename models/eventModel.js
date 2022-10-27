@@ -1,5 +1,27 @@
 import mongoose from "mongoose";
 
+const participantSchema = mongoose.Schema(
+	{
+		name: {
+			type: String,
+			required: true,
+		},
+		attended: {
+			type: Boolean,
+			required: true,
+			default: true,
+		},
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: "User",
+		},
+	},
+	{
+		timestamps: true,
+	}
+);
+
 const eventSchema = mongoose.Schema(
 	{
 		user: {
@@ -19,11 +41,8 @@ const eventSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		isAttended: {
-			type: Boolean,
-			required: true,
-			default: false,
-		},
+
+		participants: [participantSchema],
 	},
 	{
 		timestamps: true,
