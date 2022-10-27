@@ -46,6 +46,7 @@ const createDonation = asyncHandler(async (req, res) => {
 
 	const donation = Donation.create({
 		user: req.user._id,
+		name: req.user.name,
 		title: req.body.title,
 		photo: req.body.photo,
 		description: req.body.description,
@@ -118,6 +119,31 @@ const deleteDonation = asyncHandler(async (req, res) => {
 	}
 });
 
+// @desc    Create participant
+// @route   POST /api/donations/:id
+// @access  private
+
+const createDonationParticipant = asyncHandler(async (req, res) => {
+	const { wanted } = req.body;
+	const donation = await Donation.findById(req.params.id);
+
+	if (donation) {
+		const participant = {
+			name: req.user.name,
+			wanted: wanted || donation.wanted,
+			user: req.user._id,
+		};
+
+		donation.participants.push(participant);
+
+		await donation.save();
+		res.status(201).json({ message: "Participant added." });
+	} else {
+		res.status(404);
+		throw new Error("Donation not found");
+	}
+});
+
 export {
 	getDonations,
 	getMyDonations,
@@ -125,4 +151,5 @@ export {
 	updateDonation,
 	deleteDonation,
 	getDonationById,
+	createDonationParticipant
 };
