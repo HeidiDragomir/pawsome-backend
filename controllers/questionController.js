@@ -48,7 +48,8 @@ const createQuestion = asyncHandler(async (req, res) => {
 		user: req.user._id,
 		name: req.user.name,
 		title: req.body.title,
-		photo: req.body.photo,
+		photo:
+			"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyccpkqVagH-8Pbq0r3-fCJz20h_S92K2rFQ&usqp=CAU",
 		description: req.body.description,
 	});
 	const createdQuestion = await question.save();
