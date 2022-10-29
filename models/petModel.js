@@ -7,6 +7,14 @@ const petSchema = mongoose.Schema(
 			required: true,
 			ref: "User",
 		},
+		userEmail: {
+			type: String,
+			ref: "User",
+		},
+		userDetails: {
+			type: String,
+			ref: "user",
+		},
 		name: {
 			type: String,
 			required: true,

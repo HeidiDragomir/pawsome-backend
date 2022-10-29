@@ -64,20 +64,18 @@ const getMyPets = asyncHandler(async (req, res) => {
 	const pets = await Pet.find({ user: req.user._id });
 	res.status(200).json(pets);
 });
+
 // @desc    Set pet
 // @route   SET /api/pets
 // @access  private
 
 const createPet = asyncHandler(async (req, res) => {
-	// if (!req.body.name) {
-	// 	res.status(400);
-	// 	throw new Error("Please add a name");
-	// }
-
 	const { name, gender, age, size, about, photo, place } = req.body;
 
 	const pet = new Pet({
 		user: req.user._id,
+		userEmail: req.user.email,
+		userDetails: req.user.details,
 		name,
 		gender,
 		age,
