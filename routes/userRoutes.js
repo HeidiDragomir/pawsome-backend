@@ -4,9 +4,6 @@ import {
 	loginUser,
 	profileUser,
 	updateProfileUser,
-	createAboutMe,
-	getAboutMe,
-	updateAboutMe,
 	registerUserAdmin,
 	getUsers,
 	getUserById,
@@ -25,12 +22,6 @@ router
 	.route("/profile")
 	.get(protect, profileUser)
 	.put(protect, updateProfileUser);
-
-// router
-// 	.route("/profile/aboutme")
-// 	.post(protect, createAboutMe)
-// 	.get(protect, getAboutMe)
-// 	.put(protect, updateAboutMe);
 
 router.route("/admin").post(protect, isAdmin, registerUserAdmin);
 

@@ -129,75 +129,6 @@ const updateProfileUser = asyncHandler(async (req, res) => {
 	}
 });
 
-//// ABOUT ME
-
-// @description Post user details
-// @route   POST /api/users/profile/aboutme
-// @access Private
-
-const createAboutMe = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id);
-
-	if (!req.body.details) {
-		res.status(400);
-		throw new Error("Please add a description");
-	}
-
-	if (user) {
-		user.details = req.body.details;
-
-		const createdAboutMe = await user.save();
-		res.json({
-			details: createdAboutMe.details,
-		});
-	} else {
-		res.status(404);
-		throw new Error("User not found");
-	}
-});
-
-// @description Get user details
-// @route   GET /api/users/profile/aboutme
-// @access Private
-
-const getAboutMe = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id);
-	if (user) {
-		res.json({
-			details: user.details,
-		});
-	} else {
-		res.status(404);
-		throw new Error("User not found");
-	}
-});
-
-// @description Update user details
-// @route   PUT /api/users/profile/aboutme
-// @access Private
-
-const updateAboutMe = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id);
-
-	if (!req.body.details) {
-		res.status(400);
-		throw new Error("Please add or update a description");
-	}
-
-	if (user) {
-		user.details = req.body.details || user.details;
-
-		const updatedDetails = await user.save();
-
-		res.json({
-			details: updatedDetails.details,
-		});
-	} else {
-		res.status(404);
-		throw new Error("User not found");
-	}
-});
-
 // @description Create new user by admin
 // @route   POST /api/users/admin
 // @access Admin
@@ -310,9 +241,6 @@ export {
 	loginUser,
 	profileUser,
 	updateProfileUser,
-	createAboutMe,
-	getAboutMe,
-	updateAboutMe,
 	registerUserAdmin,
 	getUsers,
 	getUserById,
