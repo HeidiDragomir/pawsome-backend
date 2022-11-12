@@ -39,11 +39,7 @@ const getMyQuestions = asyncHandler(async (req, res) => {
 // @access  private
 
 const createQuestion = asyncHandler(async (req, res) => {
-	// if (!req.body.title) {
-	// 	res.status(400);
-	// 	throw new Error("Please add a title");
-	// }
-
+	
 	const question = new Question({
 		user: req.user._id,
 		name: req.user.name,

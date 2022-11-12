@@ -10,10 +10,9 @@ import User from "../models/userModel.js";
 const registerUser = asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;
 
-	// if (!name || !email || !password || !confirmPassword) {
-	// 	res.status(400);
-	// 	throw new Error("Please add all fields");
-	// }
+	if (password.length < 6) {
+		return res.status(400).json({ message: "Password less than 6 characters" });
+	}
 
 	// Check if user exists
 	const userExist = await User.findOne({ email });
@@ -102,11 +101,6 @@ const updateProfileUser = asyncHandler(async (req, res) => {
 	if (user) {
 		user.name = req.body.name || user.name;
 		user.email = req.body.email || user.email;
-		// user.password = req.body.password.hashedPassword;
-
-		// Hash password
-		// const salt = await bcrypt.genSalt(10);
-		// const hashedPassword = await bcrypt.hash(password, salt);
 
 		if (req.body.password) {
 			user.password = req.body.password;
@@ -140,6 +134,10 @@ const registerUserAdmin = asyncHandler(async (req, res) => {
 	if (userExist) {
 		res.status(400);
 		throw new Error("User already exists");
+	}
+
+	if (password.length < 6) {
+		return res.status(400).json({ message: "Password less than 6 characters" });
 	}
 
 	// Hash password
