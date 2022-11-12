@@ -39,11 +39,7 @@ const getMyVolunteers = asyncHandler(async (req, res) => {
 // @access  private
 
 const createVolunteer = asyncHandler(async (req, res) => {
-	// if (!req.body.title) {
-	// 	res.status(400);
-	// 	throw new Error("Please add a title");
-	// }
-
+	
 	const volunteer = Volunteer.create({
 		user: req.user._id,
 		name: req.user.name,

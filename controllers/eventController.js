@@ -39,11 +39,7 @@ const getMyEvents = asyncHandler(async (req, res) => {
 // @access  private
 
 const createEvent = asyncHandler(async (req, res) => {
-	// if (!req.body.title) {
-	// 	res.status(400);
-	// 	throw new Error("Please add a title");
-	// }
-
+	
 	const event = Event.create({
 		user: req.user._id,
 		name: req.user.name,
